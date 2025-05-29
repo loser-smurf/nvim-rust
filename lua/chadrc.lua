@@ -1,17 +1,26 @@
--- This file needs to have same structure as nvconfig.lua 
--- https://github.com/NvChad/ui/blob/v3.0/lua/nvconfig.lua
--- Please read that file to know all available options :( 
-
 ---@type ChadrcConfig
 local M = {}
 
 M.base46 = {
-	theme = "onedark",
+  theme = "chadracula-evondev",
 
-	-- hl_override = {
-	-- 	Comment = { italic = true },
-	-- 	["@comment"] = { italic = true },
-	-- },
+  hl_override = {
+    ["@comment"] = { fg = "#7f848e", italic = true },
+    ["@doc"] = { fg = "#66fcf1", italic = true },
+  },
 }
 
+vim.api.nvim_set_hl(0, "RustDocComment", { fg = "#66fcf1", italic = true })
+vim.api.nvim_set_hl(0, "RustNormalComment", { fg = "#7f848e", italic = true })
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "rust",
+  callback = function()
+    vim.cmd("syntax clear")
+    vim.fn.matchadd("RustNormalComment", [[\v^\s*//[^/].*$]])
+    vim.fn.matchadd("RustDocComment", [[\v^\s*///.*$]])
+  end,
+})
+
 return M
+

@@ -1,7 +1,6 @@
 vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
 vim.g.mapleader = " "
 
--- bootstrap lazy and all plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 
 if not vim.uv.fs_stat(lazypath) then
@@ -13,7 +12,6 @@ vim.opt.rtp:prepend(lazypath)
 
 local lazy_config = require "configs.lazy"
 
--- load plugins
 require("lazy").setup({
   {
     "NvChad/NvChad",
@@ -35,3 +33,23 @@ require "nvchad.autocmds"
 vim.schedule(function()
   require "mappings"
 end)
+
+local lspconfig = require('lspconfig')
+
+lspconfig.rust_analyzer.setup({
+  on_attach = function(client, bufnr)
+    print("Rust-analyzer подключен")
+  end,
+  capabilities = require("cmp_nvim_lsp").default_capabilities(),
+  settings = {
+    ["rust-analyzer"] = {
+      cargo = {
+        allFeatures = true, -- Включаем все фичи для cargo
+      },
+      procMacro = {
+        enable = true, 
+      },
+    },
+  },
+  log_level = vim.lsp.protocol.MessageType.Log,  
+})
